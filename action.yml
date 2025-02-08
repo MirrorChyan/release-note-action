@@ -70,11 +70,12 @@ runs:
             --data @body.json
           response='{"code":0,"msg":"success","data":{"id":114514,"name":"${{ steps.information.outputs.version_name }}","number":1919810}}'
         fi
-
+        
+        echo "response=$response" | tee -a "$GITHUB_OUTPUT"
+        
         error=$(echo "$response" | jq .code)
         msg=$(echo "$response" | jq .msg)
         
-        echo "response=$response" | tee -a "$GITHUB_OUTPUT"
         echo "error=$error" | tee -a "$GITHUB_OUTPUT"
         echo "msg=$msg" | tee -a "$GITHUB_OUTPUT"
 
