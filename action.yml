@@ -9,13 +9,12 @@ branding:
 inputs:
   version_name:
     required: false
+  release_note:
+    required: false
 
   mirrorchyan_rid:
     required: true
   upload_token:
-    required: true
-
-  release_note:
     required: true
 
   # for test
