@@ -46,7 +46,7 @@ runs:
       id: information
       shell: bash
       run: |
-        version_name=${{ inputs.version_name == '' && steps.latest-release.outputs.release ||  inputs.version_name }}
+        version_name=${{ inputs.version_name == '' && steps.latest-release.outputs.release || inputs.version_name }}
         release_note=${{ inputs.version_name == '' && steps.latest-release.outputs.description || inputs.release_note }}
       
         echo "version_name=$version_name" | tee -a "$GITHUB_OUTPUT"
@@ -65,7 +65,7 @@ runs:
           curl --output /dev/null --location --request POST 'www.github.com' \
             --header 'Authorization:${{ inputs.upload_token }}' \
             --form 'version_name="${{ steps.information.outputs.version_name }}"' \
-            --form 'content=@"${{ steps.information.outputs.release_note }}"')
+            --form 'content=@"${{ steps.information.outputs.release_note }}"'
           response='{"code":0,"msg":"success","data":{"id":114514,"name":"${{ steps.information.outputs.version_name }}","number":1919810}}'
         fi
 
