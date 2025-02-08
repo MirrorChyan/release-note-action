@@ -1,0 +1,64 @@
+name: MirrorChyan Release Note
+description: MirrorChyan Release Note
+author: MirrorChyan
+
+branding:
+  icon: arrow-up
+  color: black
+
+inputs:
+  version_name:
+    required: false
+
+  mirrorchyan_rid:
+    required: true
+  upload_token:
+    required: true
+
+  release_note:
+    required: true
+
+  # for test
+  fake_upload:
+    required: false
+    default: "false"
+
+outputs:
+  error:
+    value: ${{ steps.upload.outputs.error }}
+  msg:
+    value: ${{ steps.upload.outputs.msg }}
+  response:
+    value: ${{ steps.upload.outputs.response }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Upload to MirrorChyan
+      id: upload
+      shell: bash
+      run: |
+        if [[ ${{ inputs.fake_upload }} != true ]]; then
+          response=$(curl --location --request POST 'https://mirrorc.top/api/resources/${{ inputs.mirrorchyan_rid }}/versions/release-note' \
+            --header 'Authorization:${{ inputs.upload_token }}' \
+            --form 'version_name="${{ steps.information.outputs.version_name }}"' \
+            --form 'content=@"${{ inputs.release_note }}"')
+        else
+          curl --output /dev/null --location --request POST 'www.github.com' \
+            --header 'Authorization:${{ inputs.upload_token }}' \
+            --form 'version_name="${{ steps.information.outputs.version_name }}"' \
+            --form 'content=@"${{ inputs.release_note }}"')
+          response='{"code":0,"msg":"success","data":{"id":114514,"name":"${{ steps.information.outputs.version_name }}","number":1919810}}'
+        fi
+
+        error=$(echo "$response" | jq .code)
+        msg=$(echo "$response" | jq .msg)
+        
+        echo "response=$response" | tee -a "$GITHUB_OUTPUT"
+        echo "error=$error" | tee -a "$GITHUB_OUTPUT"
+        echo "msg=$msg" | tee -a "$GITHUB_OUTPUT"
+
+        if [[ $error != 0 ]]; then
+          echo "Bad Response!"
+          exit 1
+        fi
