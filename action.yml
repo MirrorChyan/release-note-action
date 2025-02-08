@@ -50,26 +50,24 @@ runs:
         release_note="${{ inputs.version_name == '' && steps.latest-release.outputs.description || inputs.release_note }}"
       
 
-        body=$(jq -cn --arg version_name $version_name --arg content $release_note '$ARGS.named')
-        
-        echo $body > body.md
+        jq -cn --arg version_name $version_name --arg content $release_note '$ARGS.named' > body.json
 
     - name: Upload to MirrorChyan
       id: upload
       shell: bash
       run: |
-        cat body.md
+        cat body.json
       
         if [[ ${{ inputs.fake_upload }} != true ]]; then
           response=$(curl --location --request POST 'https://mirrorc.top/api/resources/${{ inputs.mirrorchyan_rid }}/versions/release-note' \
             --header 'Authorization:${{ inputs.upload_token }}' \
             --header "Content-Type: application/json" \
-            --data @body.md)
+            --data @body.json)
         else
           curl --output /dev/null --location --request POST 'www.github.com' \
             --header 'Authorization:${{ inputs.upload_token }}' \
             --header "Content-Type: application/json" \
-            --data @body.md
+            --data @body.json
           response='{"code":0,"msg":"success","data":{"id":114514,"name":"${{ steps.information.outputs.version_name }}","number":1919810}}'
         fi
 
