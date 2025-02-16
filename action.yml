@@ -45,11 +45,10 @@ runs:
     - name: Organize information
       id: information
       shell: bash
+      env:
+        version_name: ${{ inputs.version_name == '' && steps.latest-release.outputs.release || inputs.version_name }}
+        release_note: ${{ inputs.version_name == '' && steps.latest-release.outputs.description || inputs.release_note }}
       run: |
-        version_name="${{ inputs.version_name == '' && steps.latest-release.outputs.release || inputs.version_name }}"
-        release_note="${{ inputs.version_name == '' && steps.latest-release.outputs.description || inputs.release_note }}"
-      
-
         jq -cn --arg version_name "$version_name" --arg content "$release_note" '$ARGS.named' > body.json
 
     - name: Upload to MirrorChyan
