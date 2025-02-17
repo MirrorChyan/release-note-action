@@ -58,7 +58,7 @@ runs:
         cat body.json
       
         if [[ ${{ inputs.fake_upload }} != true ]]; then
-          response=$(curl --location --request PUT 'https://mirrorchyan.com/api/resources/${{ inputs.mirrorchyan_rid }}/versions/release-note' \
+          response=$(curl --location --request PUT 'https://www.mirrorchyan.com/api/resources/${{ inputs.mirrorchyan_rid }}/versions/release-note' \
             --header 'Authorization:${{ inputs.upload_token }}' \
             --header "Content-Type: application/json" \
             --data @body.json)
