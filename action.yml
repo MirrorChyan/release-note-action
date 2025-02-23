@@ -12,6 +12,12 @@ inputs:
   release_note:
     required: false
 
+  auto_channel:
+    required: false
+    default: "true"
+  channel:
+    required: false
+
   mirrorchyan_rid:
     required: true
   upload_token:
@@ -49,7 +55,21 @@ runs:
         version_name: ${{ inputs.version_name == '' && steps.latest-release.outputs.release || inputs.version_name }}
         release_note: ${{ inputs.version_name == '' && steps.latest-release.outputs.description || inputs.release_note }}
       run: |
-        jq -cn --arg version_name "$version_name" --arg content "$release_note" '$ARGS.named' > body.json
+        if [[ ${{ inputs.auto_channel }} != false ]]; then
+          if [[ "$version_name" == *"alpha"* ]]; then
+            channel="alpha"
+          elif [[ "$version_name" == *"beta"* ]]; then
+            channel="beta"
+          elif [[ "$version_name" == *"rc"* ]]; then
+            channel="beta"
+          else
+            channel="stable"
+          fi
+        else
+          channel="${{ inputs.channel }}"
+        fi
+        
+        jq -cn --arg version_name "$version_name" --arg channel "$channel" --arg content "$release_note" '$ARGS.named' > body.json
 
     - name: Upload to MirrorChyan
       id: upload
