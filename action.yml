@@ -42,6 +42,7 @@ runs:
   using: "composite"
   steps:
     - id: latest-release
+      if: ${{ inputs.version_name == '' }}
       uses: pozetroninc/github-action-get-latest-release@master
       with:
         owner: ${{ github.repository_owner }}
