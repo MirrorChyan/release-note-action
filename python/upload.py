@@ -2,7 +2,6 @@ import sys
 import time
 import urllib3
 import requests
-import json
 from datetime import datetime
 
 urllib3.disable_warnings()
@@ -43,7 +42,7 @@ def main():
     }
 
     with open(body_file, "r") as file:
-        data = json.load(file)
+        data = file.read()
 
     log(data)
 
