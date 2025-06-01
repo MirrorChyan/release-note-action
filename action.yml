@@ -24,11 +24,10 @@ inputs:
     required: true
   github_token:
     required: false
-
-  # for test
-  fake_upload:
+  owner:
     required: false
-    default: "false"
+  repo:
+    required: false
 
 outputs:
   error:
@@ -45,8 +44,8 @@ runs:
       if: ${{ inputs.version_name == '' }}
       uses: pozetroninc/github-action-get-latest-release@master
       with:
-        owner: ${{ github.repository_owner }}
-        repo: ${{ github.event.repository.name }}
+        owner: ${{ inputs.owner || github.repository_owner }}
+        repo: ${{ inputs.repo || github.event.repository.name }}
         token: ${{ inputs.github_token }}
 
     - name: Organize information
