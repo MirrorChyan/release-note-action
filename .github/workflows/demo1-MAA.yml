@@ -1,0 +1,20 @@
+name: demo1 for MAA
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  mirrorchyan:
+    runs-on: macos-latest
+    steps:
+      - name: Upload MAA win
+        uses: MirrorChyan/release-note-action@v1
+        with:
+          mirrorchyan_rid: demo1
+
+          owner: MaaAssistantArknights
+          repo: MaaAssistantArknights
+
+          upload_token: ${{ secrets.MirrorChyanUploadTokenForDemo1 }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
