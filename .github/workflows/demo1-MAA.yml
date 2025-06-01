@@ -5,10 +5,10 @@ on:
   push:
 
 jobs:
-  mirrorchyan:
+  release_note:
     runs-on: macos-latest
     steps:
-      - name: Upload MAA win
+      - name: Upload MAA release note for demo1
         uses: MirrorChyan/release-note-action@v1
         with:
           mirrorchyan_rid: demo1
