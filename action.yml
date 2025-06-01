@@ -77,29 +77,10 @@ runs:
       shell: bash
       run: |
         cat body.json
-      
-        if [[ ${{ inputs.fake_upload }} != true ]]; then
-          response=$(curl --location --request PUT 'https://mirrorchyan.com/api/resources/${{ inputs.mirrorchyan_rid }}/versions/release-note' \
-            --header 'Authorization:${{ inputs.upload_token }}' \
-            --header "Content-Type: application/json" \
-            --data @body.json)
-        else
-          curl --output /dev/null --location --request PUT 'www.github.com' \
-            --header 'Authorization:${{ inputs.upload_token }}' \
-            --header "Content-Type: application/json" \
-            --data @body.json
-          response='{"code":0,"msg":"success","data":{"id":114514,"name":"${{ steps.information.outputs.version_name }}","number":1919810}}'
-        fi
-        
-        echo "response=$response" | tee -a "$GITHUB_OUTPUT"
-        
-        error=$(echo "$response" | jq .code)
-        msg=$(echo "$response" | jq .msg)
-        
-        echo "error=$error" | tee -a "$GITHUB_OUTPUT"
-        echo "msg=$msg" | tee -a "$GITHUB_OUTPUT"
 
-        if [[ $error != 0 ]]; then
-          echo "Bad Response!"
-          exit 1
+        if [ ! -f "mirrorchyan_uploading.py" ];then
+          wget -O mirrorchyan_uploading.py https://raw.githubusercontent.com/MirrorChyan/release-note-action/refs/heads/v1/python/upload.py
+          python -m pip install requests
         fi
+
+        python mirrorchyan_uploading.py '${{ inputs.mirrorchyan_rid }}' '${{ inputs.upload_token }}' body.json
