@@ -42,7 +42,7 @@ def main():
     }
 
     with open(body_file, "r", encoding="utf-8") as file:
-        data = file.read()
+        data = file.read().strip()
 
     log(data)
 
