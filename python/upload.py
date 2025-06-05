@@ -41,7 +41,7 @@ def main():
         "Content-Type": "application/json",
     }
 
-    with open(body_file, "r") as file:
+    with open(body_file, "r", encoding="utf-8") as file:
         data = file.read()
 
     log(data)
