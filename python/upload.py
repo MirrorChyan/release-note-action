@@ -41,7 +41,7 @@ async def main():
     }
 
     with open(body_file, "r", encoding="utf-8") as file:
-        data = json.loadsfile.read()
+        data = file.read()
 
     log(data)
 
