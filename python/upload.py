@@ -4,7 +4,6 @@ import urllib3
 import requests
 from datetime import datetime
 
-urllib3.disable_warnings()
 
 
 def log(msg: object) -> None:
@@ -18,8 +17,7 @@ def upload(rid: str, data: dict, headers: dict) -> bool:
     response_1 = requests.put(
         f"https://mirrorchyan.com/api/resources/{rid}/versions/release-note",
         headers=headers,
-        data=data,
-        verify=False,
+        data=data
     )
     log(f"step 1: {response_1.status_code}")
 
