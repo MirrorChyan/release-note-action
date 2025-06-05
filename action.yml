@@ -71,7 +71,7 @@ runs:
         
         jq -cn --arg version_name "$version_name" --arg channel "$channel" --arg content "$release_note" '$ARGS.named' > body.json
         
-        artifact="MirrorChyan-${{ inputs.mirrorchyan_rid }}-$version_name-release-note.json"
+        artifact="MirrorChyan-${{ inputs.mirrorchyan_rid }}-$version_name-release_note"
         artifact="${artifact//:/_}"
         artifact="${artifact// /+}"
         echo "artifact=$artifact" | tee -a "$GITHUB_OUTPUT"
