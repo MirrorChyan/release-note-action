@@ -49,7 +49,7 @@ def main():
     done = False
     retries = 3
     for i in range(retries):
-        if upload(rid, data, headers):
+        if upload(rid, json.loads(data), headers):
             done = True
             break
         elif i + 1 < retries:
