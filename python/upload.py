@@ -1,37 +1,36 @@
 import sys
 import time
-import urllib3
-import requests
+from aiohttp import ClientSession
 from datetime import datetime
-
-urllib3.disable_warnings()
+import asyncio
 
 
 def log(msg: object) -> None:
     print(f"{datetime.now()} | {msg}")
 
 
-def upload(rid: str, data: dict, headers: dict) -> bool:
+async def upload(rid: str, data: dict, headers: dict) -> bool:
     log("start upload")
 
     # step 1
-    response_1 = requests.put(
-        f"https://dev.mirrorchyan.com/api/resources/{rid}/versions/release-note",
-        headers=headers,
-        data=data,
-        verify=False,
-    )
-    log(f"step 1: {response_1.status_code}")
+    async with ClientSession() as session:
+        async with session.put(
+            f"https://dev.mirrorchyan.com/api/resources/{rid}/versions/release-note",
+            headers=headers,
+            data=data,
+        ) as response:
 
-    if response_1.status_code != 200:
-        log(f"step 1 failed: {response_1.status_code}, {response_1.text}")
-        return False
+            log(f"step 1: {response.status}")
 
-    log("uploaded")
-    return True
+            if response.status != 200:
+                log(f"step 1 failed: {response.status}, {response.text()}")
+                return False
+
+            log("uploaded")
+            return True
 
 
-def main():
+async def main():
     _, rid, token, body_file = sys.argv
 
     headers = {
@@ -42,18 +41,20 @@ def main():
     }
 
     with open(body_file, "r", encoding="utf-8") as file:
-        data = file.read().strip()
+        data = file.read()
 
     log(data)
 
     done = False
-    retries = 114514
+    retries = 3
     for i in range(retries):
-        if upload(rid, data, headers):
+        if await upload(rid, data, headers):
             done = True
             break
-        
-        time.sleep(10)
+        elif i + 1 < retries:
+            delay = (i + 1) * 15
+            log(f"retry {i + 1} after {delay}s")
+            time.sleep(delay)
 
     if not done:
         log("failed")
@@ -64,4 +65,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
