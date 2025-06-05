@@ -1,35 +1,36 @@
 import sys
 import time
-import urllib3
-import requests
+from aiohttp import ClientSession
 from datetime import datetime
-
+import asyncio
 
 
 def log(msg: object) -> None:
     print(f"{datetime.now()} | {msg}")
 
 
-def upload(rid: str, data: dict, headers: dict) -> bool:
+async def upload(rid: str, data: dict, headers: dict) -> bool:
     log("start upload")
 
     # step 1
-    response_1 = requests.put(
-        f"https://mirrorchyan.com/api/resources/{rid}/versions/release-note",
-        headers=headers,
-        data=data
-    )
-    log(f"step 1: {response_1.status_code}")
+    async with ClientSession() as session:
+        async with session.put(
+            f"https://dev.mirrorchyan.com/api/resources/{rid}/versions/release-note",
+            headers=headers,
+            data=data,
+        ) as response:
 
-    if response_1.status_code != 200:
-        log(f"step 1 failed: {response_1.status_code}, {response_1.text}")
-        return False
+            log(f"step 1: {response.status}")
 
-    log("uploaded")
-    return True
+            if response.status != 200:
+                log(f"step 1 failed: {response.status}, {response.text()}")
+                return False
+
+            log("uploaded")
+            return True
 
 
-def main():
+async def main():
     _, rid, token, body_file = sys.argv
 
     headers = {
@@ -39,7 +40,7 @@ def main():
         "Content-Type": "application/json",
     }
 
-    with open(body_file, "r") as file:
+    with open(body_file, "r", encoding="utf-8") as file:
         data = file.read()
 
     log(data)
@@ -47,7 +48,7 @@ def main():
     done = False
     retries = 3
     for i in range(retries):
-        if upload(rid, json.loads(data), headers):
+        if await upload(rid, data, headers):
             done = True
             break
         elif i + 1 < retries:
@@ -64,4 +65,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
