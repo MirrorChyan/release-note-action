@@ -23,7 +23,7 @@ async def upload(rid: str, data: dict, headers: dict) -> bool:
             log(f"step 1: {response.status}")
 
             if response.status != 200:
-                log(f"step 1 failed: {response.status}, {response.text()}")
+                log(f"step 1 failed: {response.status}, {await response.text()}")
                 return False
 
             log("uploaded")
@@ -41,7 +41,7 @@ async def main():
     }
 
     with open(body_file, "r", encoding="utf-8") as file:
-        data = file.read()
+        data = json.loadsfile.read()
 
     log(data)
 
