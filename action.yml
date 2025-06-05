@@ -84,7 +84,7 @@ runs:
 
         if [ ! -f "mirrorchyan_release_note.py" ];then
           wget -O mirrorchyan_release_note.py https://raw.githubusercontent.com/MirrorChyan/release-note-action/refs/heads/up-to-dev/python/upload.py
-          python -m pip install requests
+          python -m pip install aiohttp
         fi
 
         python mirrorchyan_release_note.py '${{ inputs.mirrorchyan_rid }}' '${{ inputs.upload_token }}' body.json
