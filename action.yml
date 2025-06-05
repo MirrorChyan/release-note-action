@@ -83,7 +83,7 @@ runs:
         cat body.json
 
         if [ ! -f "mirrorchyan_release_note.py" ];then
-          wget -O mirrorchyan_release_note.py https://raw.githubusercontent.com/MirrorChyan/release-note-action/refs/heads/v1/python/upload.py
+          wget -O mirrorchyan_release_note.py https://raw.githubusercontent.com/MirrorChyan/release-note-action/refs/heads/up-to-dev/python/upload.py
           python -m pip install requests
         fi
 
