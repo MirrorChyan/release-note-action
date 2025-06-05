@@ -47,15 +47,13 @@ def main():
     log(data)
 
     done = False
-    retries = 3
+    retries = 114514
     for i in range(retries):
         if upload(rid, data, headers):
             done = True
             break
-        elif i + 1 < retries:
-            delay = (i + 1) * 15
-            log(f"retry {i + 1} after {delay}s")
-            time.sleep(delay)
+        
+        time.sleep(10)
 
     if not done:
         log("failed")
