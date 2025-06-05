@@ -16,7 +16,7 @@ def upload(rid: str, data: dict, headers: dict) -> bool:
 
     # step 1
     response_1 = requests.put(
-        f"https://mirrorchyan.com/api/resources/{rid}/versions/release-note",
+        f"https://dev.mirrorchyan.com/api/resources/{rid}/versions/release-note",
         headers=headers,
         data=data,
         verify=False,
