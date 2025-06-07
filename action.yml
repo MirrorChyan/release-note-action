@@ -11,6 +11,10 @@ inputs:
     required: false
   release_note:
     required: false
+  pre_release:
+    required: false
+    default: "false"
+    
 
   auto_channel:
     required: false
@@ -47,6 +51,7 @@ runs:
         owner: ${{ inputs.owner || github.repository_owner }}
         repo: ${{ inputs.repo || github.event.repository.name }}
         token: ${{ inputs.github_token }}
+        excludes: ${{ inputs.pre_release && "prerelease" || "" }}
 
     - name: Organize information
       id: information
