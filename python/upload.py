@@ -35,7 +35,7 @@ def main():
     _, rid, token, body_file = sys.argv
 
     headers = {
-        "Authorization": token,
+        "Authorization": token.strip(),
         "User-Agent": "Apifox/1.0.0 (https://apifox.com)",
         "Accept": "*/*",
         "Content-Type": "application/json",
