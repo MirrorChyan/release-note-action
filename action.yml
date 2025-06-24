@@ -84,10 +84,21 @@ runs:
 
         if [ ! -f "mirrorchyan_release_note.py" ];then
           wget -O mirrorchyan_release_note.py https://raw.githubusercontent.com/MirrorChyan/release-note-action/refs/heads/v1/python/upload.py
-          python -m pip install requests
+          python -m pip install aiohttp asyncio
         fi
 
         python mirrorchyan_release_note.py '${{ inputs.mirrorchyan_rid }}' '${{ inputs.upload_token }}' body.json
+
+    - name: Create issue if failed
+      if: failure()
+      uses: actions-cool/issues-helper@v3
+      with:
+        actions: "create-issue"
+        title: "Failed to upload release note to MirrorChyan for ${{ github.repository }}"
+        body: |
+          ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          @MistEO @Aliothmoon @dongwlin
 
     - uses: actions/upload-artifact@v4
       if: always()

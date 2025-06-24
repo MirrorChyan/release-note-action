@@ -1,37 +1,42 @@
 import sys
-import time
-import urllib3
-import requests
+import asyncio
+import aiohttp
+import json
 from datetime import datetime
-
-urllib3.disable_warnings()
 
 
 def log(msg: object) -> None:
     print(f"{datetime.now()} | {msg}")
 
 
-def upload(rid: str, data: dict, headers: dict) -> bool:
+async def upload(session: aiohttp.ClientSession, rid: str, data: dict, headers: dict) -> bool:
     log("start upload")
+    url = f"https://mirrorchyan.com/api/resources/{rid}/versions/release-note"
 
-    # step 1
-    response_1 = requests.put(
-        f"https://mirrorchyan.com/api/resources/{rid}/versions/release-note",
-        headers=headers,
-        data=data,
-        verify=False,
-    )
-    log(f"step 1: {response_1.status_code}")
-
-    if response_1.status_code != 200:
-        log(f"step 1 failed: {response_1.status_code}, {response_1.text}")
+    try:
+        # 发送 PUT 请求
+        async with session.put(
+            url,
+            headers=headers,
+            json=data,
+            ssl=False  # 等同于 requests 的 verify=False
+        ) as response:
+            log(f"step 1: {response.status}")
+            
+            if response.status != 200:
+                text = await response.text()
+                log(f"step 1 failed: {response.status}, {text}")
+                return False
+            
+            log("uploaded")
+            return True
+            
+    except Exception as e:
+        log(f"Request failed: {str(e)}")
         return False
 
-    log("uploaded")
-    return True
 
-
-def main():
+async def main():
     _, rid, token, body_file = sys.argv
 
     headers = {
@@ -42,20 +47,21 @@ def main():
     }
 
     with open(body_file, "r") as file:
-        data = file.read()
+        data = json.load(file)
 
     log(data)
 
     done = False
     retries = 3
-    for i in range(retries):
-        if upload(rid, data, headers):
-            done = True
-            break
-        elif i + 1 < retries:
-            delay = (i + 1) * 15
-            log(f"retry {i + 1} after {delay}s")
-            time.sleep(delay)
+    async with aiohttp.ClientSession() as session:
+        for i in range(retries):
+            if await upload(session, rid, data, headers):
+                done = True
+                break
+            elif i + 1 < retries:
+                delay = (i + 1) * 15
+                log(f"retry {i + 1} after {delay}s")
+                await asyncio.sleep(delay)
 
     if not done:
         log("failed")
@@ -66,4 +72,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
