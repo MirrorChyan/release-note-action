@@ -41,7 +41,7 @@ runs:
   using: "composite"
   steps:
     - id: latest-release
-      if: ${{ inputs.version_name == '' && inputs.release_note == '' }}
+      if: ${{ inputs.version_name == '' || inputs.release_note == '' }}
       uses: pozetroninc/github-action-get-latest-release@master
       with:
         owner: ${{ inputs.owner || github.repository_owner }}
