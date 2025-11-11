@@ -41,7 +41,7 @@ runs:
   using: "composite"
   steps:
     - id: latest-release
-      if: ${{ inputs.version_name == '' }}
+      if: ${{ inputs.version_name == '' && inputs.release_note == '' }}
       uses: pozetroninc/github-action-get-latest-release@master
       with:
         owner: ${{ inputs.owner || github.repository_owner }}
@@ -54,7 +54,7 @@ runs:
       shell: bash
       env:
         version_name: ${{ inputs.version_name == '' && steps.latest-release.outputs.release || inputs.version_name }}
-        release_note: ${{ inputs.version_name == '' && steps.latest-release.outputs.description || inputs.release_note }}
+        release_note: ${{ inputs.release_note == '' && steps.latest-release.outputs.description || inputs.release_note }}
       run: |
         if [[ "${{ inputs.channel }}" == "" ]]; then
           if [[ "$version_name" == *"alpha"* ]]; then
