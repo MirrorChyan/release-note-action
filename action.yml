@@ -42,11 +42,12 @@ runs:
   steps:
     - id: latest-release
       if: ${{ inputs.version_name == '' || inputs.release_note == '' }}
-      uses: pozetroninc/github-action-get-latest-release@master
+      uses: MirrorChyan/github-action-get-latest-release@master
       with:
         owner: ${{ inputs.owner || github.repository_owner }}
         repo: ${{ inputs.repo || github.event.repository.name }}
         token: ${{ inputs.github_token }}
+        tag: ${{ inputs.version_name }}
         excludes: "draft"
 
     - name: Organize information
