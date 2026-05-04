@@ -111,7 +111,7 @@ runs:
         body: |
           ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-          @MistEO @Aliothmoon @dongwlin
+          @MistEO @Aliothmoon 
 
     - name: Notify admin if failed
       if: failure() && steps.check-token.outcome == 'success'
